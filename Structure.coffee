@@ -30,10 +30,20 @@ exports.Monoid = class Monoid extends exports.Magma
 		super set, op
 		assert.ok (set.contains id), 'set does not contain identity'
 		@i = id
+		@log = []
 	op: (x, y) ->
 		z = super x, y
+		@log[z] = [x, y]
 		assert.ok (@i != x or z == y), 'monoid left-identity failed'
 		assert.ok (@i != y or z == x), 'monoid right-identity failed'
+		if @log[x] != undefined
+			assert.ok (z == (super @log[x][0],
+			                     (super @log[x][1], y))),
+			          'monoid not left-associative'
+		if @log[y] != undefined
+			assert.ok (z == (super (super x, @log[y][0]),
+			                     @log[y][1])),
+			          'monoid not right-associative'
 		z
 	cross: (M) ->
 		z = super M
