@@ -11,20 +11,25 @@ exports.Set = class Set
 		new Set (x) => (@contains x) and (also x)
 
 
+exports.Function = (f, dom, ran) ->
+	(x) ->
+		assert.ok (dom.contains x), 'value outside function domain'
+		y = f x
+		assert.ok (ran.contains y), 'function lands outside range'
+		y
+
+
 exports.Magma = class Magma
 	constructor: (set, op) ->
-		@s = set
-		@o = op
+		@set = set
+		@o = exports.Function ( (p) -> op p[0], p[1] ), (@set.cross @set), @set
 	op: (x, y) ->
-		assert.ok (@s.contains(x) and @s.contains(y)), 'values outside of magma'
-		z = @o x, y
-		assert.ok (@s.contains z), 'magma operation not closed'
-		z
+		@o [x, y]
 	pow: (x,i) ->
 		assert.ok i > 0, 'power must be a positive integer'
 		[1..i-1].reduce ((result, discarded) => (@op result, x)), x
 	cross: (M) ->
-		new Magma (@s.cross M.s), ((x, y) => [@op(x[0], y[0]), M.op(x[1], y[1])])
+		new Magma (@set.cross M.set), ((x, y) => [@op(x[0], y[0]), M.op(x[1], y[1])])
 
 
 exports.Monoid = class Monoid extends exports.Magma
@@ -56,7 +61,7 @@ exports.Monoid = class Monoid extends exports.Magma
 exports.Group = class Group extends exports.Monoid
 	constructor: (set, op, id, inv) ->
 		super set, op, id
-		@inv = inv
+		@inv = exports.Function inv, @set, @set
 	invert: (x) ->
 		y = @inv x
 		assert.ok @op(x, y) == @i, 'inverse failed to invert'
@@ -65,3 +70,4 @@ exports.Group = class Group extends exports.Monoid
 		z = super M
 		z.invert = (p) => [@invert(p[0]), M.invert(p[1])]
 		z
+
