@@ -7,6 +7,8 @@ exports.Set = class Set
 		@char x
 	cross: (B) ->
 		new Set (p) => @contains(p[0]) and B.contains(p[1])
+	where: (also) ->
+		new Set (x) => (@contains x) and (also x)
 
 
 exports.Magma = class Magma
@@ -48,4 +50,18 @@ exports.Monoid = class Monoid extends exports.Magma
 	cross: (M) ->
 		z = super M
 		z.i = [@i, M.i]
+		z
+
+
+exports.Group = class Group extends exports.Monoid
+	constructor: (set, op, id, inv) ->
+		super set, op, id
+		@inv = inv
+	invert: (x) ->
+		y = @inv x
+		assert.ok @op(x, y) == @i, 'inverse failed to invert'
+		y
+	cross: (M) ->
+		z = super M
+		z.invert = (p) => [@invert(p[0]), M.invert(p[1])]
 		z
