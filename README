@@ -3,13 +3,10 @@ Coffeescript classes to manipulate algebraic structures. Uses
 
 Some usage:
 
-    s = require './Structure.coffee'
-    Z = new s.Group (new s.Set (x) -> x == (Math.floor x)), ((x,y) -> x+y), 0, (x) -> -x
-    Zmod = (n) -> new s.Group (new s.Set (x) -> x in [0..n-1]), ((x,y) -> (x+y)%n), 0, (x) -> (n-x)%n
-    Z2 = Zmod 2
-    Z3 = Zmod 3
-    Z5 = Zmod 5
-    Z10 = Zmod 10
+s = require './Structure.coffee'
 
-    Str = new s.Monoid (new s.Set (x) -> typeof(x) == 'string'), ((x,y) -> (x+y)), ''
-
+Str  = new s.Monoid (new s.Set (x) -> typeof(x) == 'string'), ( (x,y) -> x+y ), ''
+Z    = new s.Group (new s.Set (x) -> x == (Math.floor x)), ( (x,y) -> x+y ), 0, (x) -> -x
+Zmod = (n) -> new s.Group (new s.Set (x) -> x in [0...n]), ( (x,y) -> (x+y)%n ), 0, (x) -> (n-x)%n
+Z2   = Zmod 2
+Z3   = Zmod 3

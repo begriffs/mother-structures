@@ -1,12 +1,13 @@
 assert = require 'assert'
 
 exports.Set = class Set
-	constructor: (characteristic) ->
+	constructor: (characteristic, eq = (x,y) -> x == y) ->
 		@char = characteristic
+		@eq = eq
 	contains: (x) ->
 		@char x
 	cross: (B) ->
-		new Set (p) => @contains(p[0]) and B.contains(p[1])
+		new Set ( (p) => @contains(p[0]) and B.contains(p[1]) ), ( (p,q) => (@eq p[0], q[0]) and (B.eq p[1], q[1]) )
 	where: (also) ->
 		new Set (x) => (@contains x) and (also x)
 
@@ -17,7 +18,6 @@ exports.Function = (f, dom, ran) ->
 		y = f x
 		assert.ok (ran.contains y), 'function lands outside range'
 		y
-
 
 exports.Magma = class Magma
 	constructor: (set, op) ->
