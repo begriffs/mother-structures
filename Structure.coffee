@@ -12,11 +12,13 @@ exports.Set = class Set
     new Set (x) => (@contains x) and (also x)
 
 exports.Function = (f, dom, ran) ->
-  (xs...) ->
+  ret = (xs...) ->
     assert.ok (dom.contains x), "argument #{i+1} outside function domain" for x, i in xs
     y = f xs...
     assert.ok (ran.contains y), 'function lands outside range'
     y
+  ret.dom = dom
+  ret.ran = ran
 
 exports.Magma = class Magma
   constructor: (set, op) ->
