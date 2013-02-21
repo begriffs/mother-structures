@@ -12,9 +12,9 @@ exports.Set = class Set
     new Set (x) => (@contains x) and (also x)
 
 exports.Function = (f, dom, ran) ->
-  (x) ->
-    assert.ok (dom.contains x), 'value outside function domain'
-    y = f x
+  (xs...) ->
+    assert.ok (dom.contains x), "argument #{i+1} outside function domain" for x, i in xs
+    y = f xs...
     assert.ok (ran.contains y), 'function lands outside range'
     y
 
