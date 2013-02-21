@@ -19,6 +19,12 @@ exports.Function = (f, dom, ran) ->
     y
   ret.dom = dom
   ret.ran = ran
+  ret.compose = (fs...) ->
+    fs.unshift ret
+    last = fs.pop()
+    g = (xs...) -> fs.reduceRight( ((result, f) -> f(result)), last(xs...))
+    exports.Function g, last.dom, ret.ran
+  ret
 
 exports.Magma = class Magma
   constructor: (set, op) ->
